@@ -385,7 +385,7 @@ begin
   );
   
   decod : decoder port map(
-	iSELECT => Bus2IP_Addr(30 to 31),
+	iSELECT => Bus2IP_Addr(25) & Bus2IP_Addr(24),--Bus2IP_Addr(30 to 31),
 	oD0 => sTxtWe,
 	oD1 => sGraphWe,
 	oD2 => sRegWe,
@@ -393,7 +393,7 @@ begin
   );
   
   --direct mode WE
-  direct_mode_we <= '1' when Bus2IP_Addr(2 to 25) = x"000000" 
+  direct_mode_we <= '1' when Bus2IP_Addr(2 to 23) = x"00000" & "00" 
   else '0';
   direct_mode_clk <= Bus2IP_Clk and sRegWe and direct_mode_we;
   
@@ -410,7 +410,7 @@ begin
 	);
 	
 	--display mode WE
-  display_mode_we <= '1' when Bus2IP_Addr(2 to 25) = x"000004" 
+  display_mode_we <= '1' when Bus2IP_Addr(2 to 23) = x"80000" & "00" 
   else '0';
   display_mode_clk <= Bus2IP_Clk and sRegWe and display_mode_we;
 	
@@ -427,7 +427,7 @@ begin
 	);
 	
 	--show frame WE
-  show_frame_we <= '1' when Bus2IP_Addr(2 to 25) = x"000008" 
+  show_frame_we <= '1' when Bus2IP_Addr(2 to 23) = x"40000" & "00" 
   else '0';
   show_frame_clk <= Bus2IP_Clk and sRegWe and show_frame_we;
 	
@@ -444,7 +444,7 @@ begin
 	);
 	
 	--font size WE
-  font_size_we <= '1' when Bus2IP_Addr(2 to 25) = x"00000C" 
+  font_size_we <= '1' when Bus2IP_Addr(2 to 23) = x"C0000" & "00" 
   else '0';
   font_size_clk <= Bus2IP_Clk and sRegWe and font_size_we;
 	
@@ -461,7 +461,7 @@ begin
 	);
 	
 	--foreground color WE
-  foreground_color_we <= '1' when Bus2IP_Addr(2 to 25) = x"000010" 
+  foreground_color_we <= '1' when Bus2IP_Addr(2 to 23) = x"20000" & "00"
   else '0';
   foreground_color_clk <= Bus2IP_Clk and sRegWe and foreground_color_we;
 	
@@ -478,7 +478,7 @@ begin
 	);
 	
 	--background color WE
-  background_color_we <= '1' when Bus2IP_Addr(2 to 25) = x"000014" 
+  background_color_we <= '1' when Bus2IP_Addr(2 to 23) = x"A0000" & "00" 
   else '0';
   background_color_clk <= Bus2IP_Clk and sRegWe and background_color_we;
 	
@@ -495,7 +495,7 @@ begin
 	);
 	
 	--frame color WE
-  frame_color_we <= '1' when Bus2IP_Addr(2 to 25) = x"000018" 
+  frame_color_we <= '1' when Bus2IP_Addr(2 to 23) = x"60000" & "00" 
   else '0';
   frame_color_clk <= Bus2IP_Clk and sRegWe and frame_color_we;
 	
@@ -512,16 +512,16 @@ begin
 	);
 	
 	--data out
---	IP2Bus_Data <= x"0000000" & "000" & direct_mode_s(0) 			when Bus2IP_Addr = x"00000000"
---				else	x"0000000" & "00" & display_mode_s 			when Bus2IP_Addr = x"00000004"
---				else	x"0000000" & "000" & show_frame_s(0)			when Bus2IP_Addr = x"00000008"
---				else	x"0000000" & font_size_s 						when Bus2IP_Addr = x"0000000C"
---				else	x"00" 	  & foreground_color_s 				when Bus2IP_Addr = x"00000010"
---				else	x"00" 	  & "000" & background_color_s 	when Bus2IP_Addr = x"00000014"
---				else	x"00"		  & "000" & frame_color_s 			when Bus2IP_Addr = x"00000018"
---				else  "000" & vga_hsync_s & vga_vsync_s & blank_s & pix_clock_s &
---						vga_rst_n_s & psave_s & sync_s &
---						dir_pixel_column_s & dir_pixel_row_s;-- when IP2Bus_Data = x"0000001C"
+	IP2Bus_Data <= x"0000000" & "000" & direct_mode_s(0) 			when Bus2IP_Addr(2 to 23) = x"00000" & "00"
+				else	x"0000000" & "00" & display_mode_s 			when Bus2IP_Addr(2 to 23) = x"80000" & "00"
+				else	x"0000000" & "000" & show_frame_s(0)			when Bus2IP_Addr(2 to 23) = x"40000" & "00"
+				else	x"0000000" & font_size_s 						when Bus2IP_Addr(2 to 23) = x"C0000" & "00"
+				else	x"00" 	  & foreground_color_s 				when Bus2IP_Addr(2 to 23) = x"20000" & "00"
+				else	x"00" 	  & background_color_s 	when Bus2IP_Addr(2 to 23) = x"A0000" & "00"
+				else	x"00"		  & frame_color_s 			when Bus2IP_Addr(2 to 23) = x"60000" & "00"
+				else  "000000" & vga_hsync_s & vga_vsync_s & blank_s &
+						vga_rst_n_s & psave_s & sync_s &
+						dir_pixel_column_s & dir_pixel_row_s;-- when IP2Bus_Data = x"0000001C"
 	
 
 end IMP;
